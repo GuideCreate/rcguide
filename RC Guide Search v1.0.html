@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Contact Center Guide Search</title>
+<meta name="description" content="Dan Lester Gansatao" />
+<style>
+  :root{
+    --bg: #0b0c10;
+    --card: #121318;
+    --muted: #9399a1;
+    --text: #e6e9ef;
+    --accent: #ff8c42;
+    --accent-2: #ffa559;
+    --ring: rgba(91,156,255,.45);
+    --border: #262936;
+  }
+  @media (prefers-color-scheme: light){
+    :root{ --bg:#f7f8fb; --card:#ffffff; --text:#11131a; --muted:#586071; --border:#e8eaf0; --ring:rgba(91,156,255,.25);} }
+
+  *{ box-sizing: border-box }
+  html,body{ height:100% }
+  body{
+    margin:0; background: radial-gradient(1200px 600px at 70% -10%, rgba(92,156,255,.12), transparent 60%),
+                               radial-gradient(1100px 700px at -10% 20%, rgba(124,199,255,.12), transparent 50%), var(--bg);
+    color:var(--text); font: 16px/1.5 system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans";
+  }
+  .container{ max-width: 1400px; margin: 0 auto; padding: 32px 20px 64px; }
+  header{ display:flex; align-items:center; gap:12px; justify-content:center; margin: 28px 0 18px; }
+  .logo{ width:42px; height:42px; display:grid; place-items:center; border-radius:12px; background: linear-gradient(135deg, var(--accent), var(--accent-2)); color:white; font-weight:800; letter-spacing:.5px; }
+  h1{ font-size: clamp(22px, 3vw, 28px); margin:0; font-weight:800; letter-spacing:.2px; }
+  .sub{ text-align:center; color:var(--muted); margin-top:6px; }
+
+  .search-wrap{ position: sticky; top: 10px; z-index: 5; margin: 16px auto 14px; max-width:720px; }
+  form.search{ position:relative; display:flex; align-items:center; gap:10px; background: var(--card); border:1px solid var(--border); border-radius: 16px; padding: 10px 12px; }
+  form.search:focus-within{ border-color: var(--accent); box-shadow: 0 0 0 6px var(--ring); }
+  .search-icon{ width:22px; height:22px; opacity:.6; }
+  input[type="search"]{ flex:1; font-size: 18px; padding: 10px 6px; border:0; outline:0; background:transparent; color:var(--text); }
+  .btn{ border:1px solid var(--border); background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(0,0,0,.06)); color:var(--text); padding:10px 14px; border-radius:12px; cursor:pointer; font-weight:600; }
+  .kbd{ font: 12px/1.2 ui-monospace; padding: 6px 8px; border-radius: 8px; border:1px solid var(--border); color:var(--muted); }
+
+  .grid{ display:grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 14px; margin-top: 18px; }
+    .card{ background: var(--card); border:1px solid var(--border); border-radius: 18px; padding: 16px; transition: transform .1s ease, border-color .2s ease, box-shadow .2s ease; }
+    .card:hover{ transform: translateY(-2px); border-color: var(--accent); box-shadow: 0 10px 26px rgba(0,0,0,.18) }
+    .card a{ color:inherit; text-decoration:none; }
+    .title{ font-weight: 800; font-size: 16px; margin-bottom: 6px; letter-spacing:.2px; }
+    .desc{ color:var(--muted); font-size: 14px; }
+    .url{ color: var(--accent-2); font-size: 12px; word-break: break-all; }
+    .tags{ display:flex; flex-wrap: wrap; gap:6px; margin-top: 10px; }
+    .tag{ font-size:12px; padding:4px 8px; border-radius: 999px; border:1px dashed var(--border); color:var(--muted); }
+
+    .bar{ display:flex; align-items:center; justify-content:space-between; margin-top: 22px; color:var(--muted); }
+    .count{ font-weight:600; }
+
+    .empty{ text-align:center; color:var(--muted); padding: 36px 12px; border:1px dashed var(--border); border-radius: 16px; }
+    .footer{ text-align:center; color:var(--muted); margin-top: 28px; font-size: 13px; }
+    mark{ background: rgba(91,156,255,.22); color: inherit; padding:0 .2em; border-radius:4px; }
+
+  /* Layout for 3 columns */
+  .content-layout {
+    display: grid;
+    grid-template-columns: 300px 1fr 300px; /* fixed width sidebars */
+    gap: 20px;
+    margin-top: 20px;
+    align-items: start;
+  }
+  @media (max-width: 1100px) {
+    .content-layout { grid-template-columns: 1fr; }
+  }
+
+  .video-box, .links-box {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 17px;
+    padding: 12px;
+    position: sticky;
+    top: 20px; /* stays visible under the search */
+    height: calc(100vh - 120px); /* fixed height relative to viewport */
+    overflow-y: auto; /* independent scrolling */
+  }
+  .video-box h2, .links-box h2 {
+    font-size: 16px;
+    margin-top: 0;
+    color: var(--text);
+    text-align: center;
+  }
+  .video-box ul, .links-box ul {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+  }
+  .video-box li, .links-box li {
+    margin-bottom: 8px;
+  }
+  .video-box a, .links-box a {
+    color: var(--text:#11131a);
+    text-decoration: none;
+    font-size: 14px;
+  }
+  .video-box a:hover, .links-box a:hover {
+    text-decoration: underline;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <div class="logo">RC</div>
+    <h1>Contact Center Guide Search</h1>
+  </header>
+  <p class="sub">Type to search and hit <span class="kbd">Enter</span>.</p>
+
+  <div class="search-wrap">
+    <form class="search" id="searchForm" autocomplete="off">
+      <svg class="search-icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>
+      <input id="q" type="search" placeholder="Search your links…" aria-label="Search" autofocus />
+      <button class="btn" type="submit">Search</button>
+      <span class="kbd">/</span>
+      <div id="suggestions" class="suggestions" hidden></div>
+    </form>
+  </div>
+
+  <div class="content-layout">
+    <!-- LEFT: Recorded Meetings -->
+    <aside class="video-box">
+      <h2>Recorded Meetings</h2>
+      <ul>
+		<li><a href="https://drive.google.com/file/d/1O78-QW4x_h5KqF28BgUsJ8YoPNsvDS65/view?usp=sharing" target="_blank" rel="noopener">RingCX Intro Overview Presentation</a></li>
+		<li><a href="https://drive.google.com/file/d/1tgI7HhyExp7x_9l64KwK0dKEU75xlcdW/view?usp=sharing" target="_blank" rel="noopener">RingCX Outbound Dialer Meeting Recording</a></li>
+		<li><a href="https://drive.google.com/file/d/1QFPngPolu9bbUyLIfNhDo-pEFl6dXhm-/view?usp=sharing" target="_blank" rel="noopener">RingCX Matt Chalupsky's Workflow API and Trigger Training</a></li>
+		<li><a href="https://drive.google.com/file/d/1pJopo_TuKt2FF7es-9BI2xnuFkvKGUlL/view?usp=sharing" target="_blank" rel="noopener">RingCX Jennie Almario's Knowledge Transfer API</a></li>
+		<li><a href="https://drive.google.com/file/d/1hkvqO3wW_ajYtktyhH057VfkZYyMZgBG/view?usp=sharing" target="_blank" rel="noopener">RingCX Campaigns Recording to SFTP-BH</a></li>
+		<li><a href="https://drive.google.com/file/d/1QyaNJqruaqPnS7IEiIgtlzABJbPwruSp/view?usp=sharing" target="_blank" rel="noopener">RingCX ASR and VM Detection</a></li>
+		<li><a href="https://drive.google.com/file/d/1m_lK6ww2Jbjk6GtsAZuCyhygwdfN3rrm/view?usp=sharing" target="_blank" rel="noopener">RingCX Adding a Social Media Channel</a></li>
+		<li><a href="https://drive.google.com/file/d/1NtQbrNIknsz2BbYIzI51-cMoEMyPUsL0/view?usp=sharing" target="_blank" rel="noopener">RingCX Adding a SMS Channel</a></li>
+		<li><a href="https://drive.google.com/file/d/1y8fj3y6EoDqznhFqFIiTbDbL1G_FGmVu/view?usp=sharing" target="_blank" rel="noopener">RingCX Adding a Chat Channel</a></li>
+		<li><a href="https://drive.google.com/file/d/1TR_3tSdPxY9qmRWHpuCqdX_i1ewjJ430/view?usp=sharing" target="_blank" rel="noopener">RingCX Knowledge Sharing Sessions Dialer Bill Fisk</a></li>
+		<li><a href="https://drive.google.com/file/d/1xiJtCXpIVR1R_P5sxvEeUVZqpINpqCEj/view?usp=sharing" target="_blank" rel="noopener">RingCX Knowledge Sharing Sessions Salesforce-HubSpot-SPOG</a></li>
+		<li><a href="https://drive.google.com/file/d/19TBdnxRwkkLsBT_OEbkxJFxgotrFURHq/view?usp=sharing" target="_blank" rel="noopener">RingCX Knowledge Sharing Sessions Requeue Shortcuts, Pre-Chat Form Data</a></li>
+		<li><a href="https://drive.google.com/file/d/1s1RghxdIS8YhuEP_I4Pqu1XI1kMdj0d-/view?usp=sharing" target="_blank" rel="noopener">RingCX Knowledge Sharing Sessions Agent Scripting and Survey Script</a></li>
+		<li><a href="https://drive.google.com/file/d/1H_Me0n7G4ctxz6h_dCilsC4x99z3HTSD/view?usp=sharing" target="_blank" rel="noopener">RingCX Knowledge Sharing Sessions Postmark and DNC Scrubbing</a></li>
+		<li><a href="https://drive.google.com/file/d/1kT98kp5k0JUt7mcQAPY4Q20QYZlftfdB/view?usp=sharing" target="_blank" rel="noopener">RingCX Knowledge Sharing Sessions Agent Assist and SPOG</a></li>
+		<li><a href="https://drive.google.com/file/d/1NiGIjaAw7szOnH3w0hdLIVvBQXacX8QG/view?usp=sharing" target="_blank" rel="noopener">RingCX Knowledge Sharing Sessions ASR and Network Requirements</a></li>
+		<li><a href="https://drive.google.com/file/d/1tdKJrgqiWSUyqo5vyMBNqRettJVVRhy-/view?usp=sharing" target="_blank" rel="noopener">RingCX Knowledge Sharing Sessions Salesforce</a></li>
+		<li><a href="https://drive.google.com/file/d/17uP61zYSh_hBHVpPSFi8BFFFdCui7OmU/view?usp=sharing" target="_blank" rel="noopener">RingCX Knowledge Sharing Sessions Post Call Survey, Agent Availabiity</a></li>
+		<li><a href="https://drive.google.com/file/d/1oV-8w3Aqu4ozvMSIRsgZlpYoMSTyinqZ/view?usp=sharing" target="_blank" rel="noopener">RingCX Knowledge Sharing Sessions Digital Chat</a></li>
+		<li><a href="https://drive.google.com/file/d/1bwXJddylEiwcNPoqptsshbDb8hspxe4t/view?usp=sharing" target="_blank" rel="noopener">RingCX Knowledge Sharing Sessions Analytics, P&D Best Practice</a></li>
+		<li><a href="https://drive.google.com/file/d/1ANksn7D7Hm7wz_BFJUlbn8ZAwGD0WPt0/view?usp=sharing" target="_blank" rel="noopener">RingCX Knowledge Sharing Sessions Agentless Dialer</a></li>
+      </ul>
+    </aside>
+
+    <!-- MIDDLE: Search Results -->
+    <main>
+      <div class="bar">
+        <div><span class="count" id="count">0</span> results</div>
+        <div><button class="btn" id="luckyBtn" type="button">Results</button></div>
+      </div>
+      <div id="results" class="grid" aria-live="polite" aria-busy="false"></div>
+    </main>
+<script>
+// =====================================
+// 1) ADD YOUR LINKS HERE
+// =====================================
+const LINKS = [
+  
+  
+{ title: "RingCX Contact Center FAQS", url: "https://docs.google.com/document/d/1IsvnNEzgl8mY5SMm1o93NwFOI0K8ouyV/edit", description: "RingCX Contact Center FAQS", tags:["FAQs","RingCX"] },
+  { title: "RingCX Build Procedure (Voice Only)", url: "https://docs.google.com/document/d/1Z56AUCnbDY-fbCiDx-qnXEgoIxY4iPAK/edit#heading=h.30j0zll", description: "RingCX Build Procedure", tags:["RingCX Build Procedure","RingCX"] },
+  { title: "RingCX Digital SMS_MMS", url: "https://docs.google.com/presentation/d/1bLWSU_vzl2XDwgB4DpfgluAEbOx3Wpsv/edit?slide=id.p1#slide=id.p1", description: "RingCX Digital SMS_MMS", tags:["RingCX","docs","SMS","MMS"] },
+  { title: "RingCX Build Procedure (Outbound Dialer)", url: "https://docs.google.com/document/d/1u-uiNHvLoAnTRkTm29XjQ1My-7HLb17X/edit#heading=h.so9mfad9dhqd", description: "RingCX Build Procedure (Outbound Dialer)", tags:["Dialer","Build Procedure","outbound"] },
+  { title: "RingCX Build Procedure (Digital Chat)", url: "https://docs.google.com/document/d/1wFSqDqhrvDsTxRLmhjYSiOcq_UIAdpC7/edit#heading=h.gjdgxs", description: "RingCX Build Procedure (Digital Chat)", tags:["Digital ","Chat"] },
+  { title: "RingCX Agent Scripting Implementation", url: "https://docs.google.com/presentation/d/1Dndvz_TH8ATobdy8DPghNLsQ33yCmhWL/edit?slide=id.p1#slide=id.p1", description: "RingCX Agent Scripting Implementation", tags:["Agent","Scripting"] },
+  { title: "RCX Postmark Email template", url: "https://docs.google.com/document/d/1jO_4KKPi2z3mt14qUZHJUgcd_GCmACgT/edit", description: "RCX Postmark Email template", tags:["Postmark","Email"] },
+  { title: "RCX Licensing Overview & Billing", url: "https://docs.google.com/document/d/17KYS0ohs1uPZ5i-JPMZT9SkqVMR9tUBR/edit#heading=h.gjdgxs", description: "RCX Licensing Overview & Billing", tags:["Licensing","Billing"] },
+  { title: "RCX Build Procedure", url: "https://docs.google.com/document/d/1a0YxyaZ0gdUHE0PR7p8kz4SQWu0aJahm/edit#heading=h.gjdgxs", description: "RCX Build Procedure", tags:["Build","RCX"] },
+  { title: "RCX Transparent Redirection", url: "https://drive.google.com/file/d/1daI5lQ_EEhoDnR8QwMLEij4f3oS2lTKr/view?usp=sharing", description: "RCX Transparent Redirection", tags:["Transparent","Redirection","RCX"] },
+  { title: "Engage Digital - Virtual Agents & Dialogflow", url: "https://docs.google.com/presentation/d/1nZUOr7P5GV7EhpKSzQoDHTlABxbYaCwy/edit?slide=id.p1#slide=id.p1", description: "Engage Digital - Virtual Agents & Dialogflow", tags:["Virtual Agents","Dialogflow","Engage"] },
+  { title: "RCX Common Issues", url: "https://docs.google.com/document/d/1ckt0VNmT2qKd16oPHtic5-VHG0182Lxs/edit", description: "RCX Common Issues", tags:["Common","Issues","RCX"] },
+  { title: "WhatsApp Outbound Notifications", url: "https://docs.google.com/document/d/1JnoV90ZhdoNZDe7ksZaCoKXw0QuXbmsl/edit#heading=h.jwn4a7d05kse", description: "WhatsApp Outbound Notifications", tags:["Whatsapp","Outbound","Notifications"] },
+  { title: "RingCX Speed to Lead", url: "https://drive.google.com/file/d/1pwPCbZmm_24gyLPwmgEHHoy-92r3LxkO/view?usp=sharing", description: "RCX Speed to Lead", tags:["Speed","Lead","RCX"] },
+  { title: "RingCX Voice and Digital Implementation via Mission Control ", url: "https://docs.google.com/document/d/11YrPjC_vX8Am9q5vdrhltyUQWjqOo165/edit", description: "RingCX Voice and Digital Implementation via Mission Control ", tags:["Voice","Digital","Implementation","Mission Control"] },
+  { title: "RingCX Documentation Link (via Support Site)", url: "https://docs.google.com/spreadsheets/d/12Ue4v4BbMJf9DdfgjwCexSLiVGvLn5CAJ14a59GIugo/edit?gid=525190609#gid=525190609", description: "RingCX Documentation Link (via Support Site)", tags:["Documentation","Link","Support Site"] },
+  { title: "RingCX Digital Training", url: "https://drive.google.com/file/d/1pwPCbZmm_24gyLPwmgEHHoy-92r3LxkO/view?usp=sharing", description: "RingCX Digital Training", tags:["Digital","Training","RCX"] },
+  { title: "RingCX API -Create App, JWT,and Token", url: "https://drive.google.com/file/d/1bwVYit7pdzNR_bQia1ujpg_oFVxVQWHc/view?usp=sharing", description: "RingCX API -Create App, JWT,and Token", tags:["JWT","API","App","Token"] },
+  { title: "RingCentral Salesforce API Requirements", url: "https://docs.google.com/document/d/1gMIKQQ70GKdh403zoDnCtdZmXz8lxcvv/edit", description: "RingCentral Salesforce API Requirements", tags:["API","Salesforce","Requirements"] },
+  { title: "RingCentral Salesforce API Requirements EXAMPLE", url: "https://drive.google.com/file/d/1pwPCbZmm_24gyLPwmgEHHoy-92r3LxkO/view?usp=sharing", description: "RingCentral Salesforce API Requirements EXAMPLE", tags:["API","Salesforce","EXAMPLE"] },
+  { title: "RingCentral REST API Requirements", url: "https://docs.google.com/document/d/1Dax12EdrGQXLXNdgssSXjx8hHlpN8y15/edit", description: "RingCentral REST API Requirements", tags:["REST","API","Requirements"] },
+  { title: "RingCentral REST API Requirements EXAMPLE", url: "https://drive.google.com/file/d/1pwPCbZmm_24gyLPwmgEHHoy-92r3LxkO/view?usp=sharing", description: "RingCentral REST API Requirements EXAMPLE", tags:["REST","API","EXAMPLE"] },
+  { title: "RingCX Postman Queues Collection Json", url: "https://drive.google.com/file/d/1V-WjRyYQ80_0XIewTzfvo6qDbLNwQ33Z/view?usp=sharing", description: "RingCX Postman Queues Collection Json", tags:["Postman","Json","RCX"] },
+  { title: "RingCX Postman Lead Upload Template Json", url: "https://drive.google.com/file/d/1tdtTaMcAARMznxbkAgjwbY3VpzCOsLVp/view?usp=sharing", description: "RingCX Postman Lead Upload Template Json", tags:["Postman","Lead","Template","Json"] },
+  { title: "RingCX Postman API Token Creation Json", url: "https://drive.google.com/file/d/1BDkozPTJOmuvwLUyl-QftT_ZcAIW2knF/view?usp=sharing", description: "RingCX Postman API Token Creation Json", tags:["Postman","API","Token","Json"] },
+  { title: "RingCX Postman Create Phonebook Entry Json", url: "https://drive.google.com/file/d/1V-WjRyYQ80_0XIewTzfvo6qDbLNwQ33Z/view?usp=sharing", description: "RingCX Postman Create Phonebook Entry Json", tags:["Postman","Json","Phonebook"] },
+  { title: "RingCX Embedded OOTB CRM Integrations", url: "https://docs.google.com/spreadsheets/d/1wCzn-pdtSzu-cQY4d9kfstZaFV-qhR-n/edit?gid=1410740914#gid=1410740914", description: "RingCX Embedded OOTB CRM Integrations", tags:["Embedded","CRM","Integrations","OOTB"] },
+  { title: "RingCX Postmark Email template", url: "https://docs.google.com/document/d/13Tp52SDzPutu3cTH5FSMLOiKmulUPbq_/edit", description: "RingCX Postmark Email template", tags:["Postmark","Email","template"] },
+  { title: "RingCX Outbound Dialer Meeting Recording", url: "https://drive.google.com/file/d/1tgI7HhyExp7x_9l64KwK0dKEU75xlcdW/view?usp=sharing", description: "RingCX Outbound Dialer Meeting Recording", tags:["Dialer","Meeting","Recording","Outbound"] },
+  { title: "RingCX Matt Chalupsky's Workflow API and Trigger Training", url: "https://drive.google.com/file/d/1QFPngPolu9bbUyLIfNhDo-pEFl6dXhm-/view?usp=sharing", description: "RCX Matt Chalupsky's Workflow API and Trigger Training", tags:["API","Meeting","Recording","Workflow","Trigger"] },
+  { title: "RingCX Jennie Almario's Knowledge Transfer API", url: "https://drive.google.com/file/d/1pJopo_TuKt2FF7es-9BI2xnuFkvKGUlL/view?usp=sharing", description: "RingCX Jennie Almario's Knowledge Transfer API", tags:["API","Jennie Almario","Meeting"] },
+  { title: "RingCX Intro Overview Presentation", url: "https://drive.google.com/file/d/1O78-QW4x_h5KqF28BgUsJ8YoPNsvDS65/view?usp=sharing", description: "RingCX Intro Overview Presentation", tags:["Intro","Overview","Presentation","Meeting","Recording"] },
+  { title: "RingCX Campaigns Recording to SFTP-BH", url: "https://drive.google.com/file/d/1hkvqO3wW_ajYtktyhH057VfkZYyMZgBG/view?usp=sharing", description: "RingCX Campaigns Recording to SFTP-BH", tags:["Campaigns","Recording","SFTP","Meeting"] },
+  { title: "RingCX ASR and VM Detection", url: "https://drive.google.com/file/d/1QyaNJqruaqPnS7IEiIgtlzABJbPwruSp/view?usp=sharing", description: "RingCX ASR and VM Detection", tags:["ASR","VM","Voicemail","Meeting","Detection"] },
+  { title: "RingCX Adding a Social Media Channel", url: "https://drive.google.com/file/d/1m_lK6ww2Jbjk6GtsAZuCyhygwdfN3rrm/view?usp=sharing", description: "RingCX Adding a Social Media Channel", tags:["Social","Media","Channel","Meeting","Adding"] },
+  { title: "RingCX Adding a SMS Channel", url: "https://drive.google.com/file/d/1NtQbrNIknsz2BbYIzI51-cMoEMyPUsL0/view?usp=sharing", description: "RingCX Adding a SMS Channel", tags:["SMS","Adding","Channel","Meeting","RingCX"] },
+  { title: "RingCX Adding a Chat Channel", url: "https://drive.google.com/file/d/1y8fj3y6EoDqznhFqFIiTbDbL1G_FGmVu/view?usp=sharing", description: "RingCX Adding a Chat Channel", tags:["Adding","Chat","Channel","Meeting","RingCX"] },
+  { title: "RingCX Knowledge Sharing Sessions Dialer Bill Fisk", url: "https://drive.google.com/file/d/1TR_3tSdPxY9qmRWHpuCqdX_i1ewjJ430/view?usp=sharing", description: "RingCX Knowledge Sharing Sessions Dialer Bill Fisk", tags:["Dialer","Knowledge","RingCX","Meeting","Sharing"] },
+  { title: "RingCX Knowledge Sharing Sessions Salesforce-HubSpot-SPOG", url: "https://drive.google.com/file/d/1xiJtCXpIVR1R_P5sxvEeUVZqpINpqCEj/view?usp=sharing", description: "RingCX Knowledge Sharing Sessions Salesforce-HubSpot-SPOG", tags:["Salesforce","HubSpot","SPOG","Meeting","Sharing","Sessions"] },
+  { title: "RingCX Knowledge Sharing Sessions Requeue Shortcuts, Pre-Chat Form Data", url: "https://drive.google.com/file/d/19TBdnxRwkkLsBT_OEbkxJFxgotrFURHq/view?usp=sharing", description: "RingCX Knowledge Sharing Sessions Requeue Shortcuts, Pre-Chat Form Data", tags:["Requeue","Shortcuts","Chat","Meeting","Form"] },
+  { title: "RingCX Knowledge Sharing Sessions Agent Scripting and Survey Script", url: "https://drive.google.com/file/d/1s1RghxdIS8YhuEP_I4Pqu1XI1kMdj0d-/view?usp=sharing", description: "RingCX Knowledge Sharing Sessions Agent Scripting and Survey Script", tags:["Agent","Scripting","Survey","Meeting","Script"] },
+  { title: "RingCX Knowledge Sharing Sessions Postmark and DNC Scrubbing", url: "https://drive.google.com/file/d/1H_Me0n7G4ctxz6h_dCilsC4x99z3HTSD/view?usp=sharing", description: "RingCX Knowledge Sharing Sessions Postmark and DNC Scrubbing", tags:["Postmark","DNC","Scrubbing","Meeting","Sessions"] },
+  { title: "RingCX Knowledge Sharing Sessions Agent Assist and SPOG", url: "https://drive.google.com/file/d/1kT98kp5k0JUt7mcQAPY4Q20QYZlftfdB/view?usp=sharing", description: "RingCX Knowledge Sharing Sessions Agent Assist and SPOG", tags:["Agent","Assist","SPOG","Meeting","Sessions"] },
+  { title: "RingCX Knowledge Sharing Sessions ASR and Network Requirements", url: "https://drive.google.com/file/d/1NiGIjaAw7szOnH3w0hdLIVvBQXacX8QG/view?usp=sharing", description: "RingCX Knowledge Sharing Sessions ASR and Network Requirements", tags:["ASR","Network","Requirements","Meeting","Sessions"] },
+  { title: "REX License Requirements per RingCX Business Use Case", url: "https://docs.google.com/document/d/1GbFUgShc0MPFSI3WVxgS_hADq7BMoMMrAIeKQTIaiNg/edit?usp=sharing", description: "REX License Requirements per RingCX Business Use Case", tags:["REX","License","Requirements","RingCX","Case"] },
+  { title: "RingCX Project Samples", url: "https://docs.google.com/spreadsheets/d/1A19v-l5sQr_o92NpMBLN0sYjM760RGNP/edit?usp=sharing&ouid=109407384816757338920&rtpof=true&sd=true", description: "RingCX Project Samples", tags:["Project","Samples","RingCX"] },
+  { title: "RingCX Check for Queued Callbacks Using Real Time Dashboard", url: "https://docs.google.com/document/d/1TBTWlPSQ8uOy7fwIeDV-vFEai_b1RGoPhbtoBqdYKKI/edit?usp=sharing", description: "RingCX Check for Queued Callbacks Using Real Time Dashboard", tags:["Callbacks","Dashboard","Real Time","RingCX"] },
+  { title: "How to Navigate to RingCX Recording Links", url: "https://docs.google.com/document/d/1TBTWlPSQ8uOy7fwIeDV-vFEai_b1RGoPhbtoBqdYKKI/edit?tab=t.i4lywyyfbjcx#heading=h.d86xv546cb0h", description: "How to Navigate to RingCX Recording Links", tags:["Recording","Navigate","How to","RingCX"] },
+  { title: "RingCX Create a Custom Report", url: "https://docs.google.com/document/d/1TBTWlPSQ8uOy7fwIeDV-vFEai_b1RGoPhbtoBqdYKKI/edit?tab=t.8uaa2gwrgqri#heading=h.ae4ohbf05l28", description: "RingCX Create a Custom Report", tags:["Custom","Report","Create","RingCX"] },
+  { title: "RingCX Live Monitoring using Real-Time dashboard", url: "https://docs.google.com/document/d/1TBTWlPSQ8uOy7fwIeDV-vFEai_b1RGoPhbtoBqdYKKI/edit?tab=t.opvg124va32y#heading=h.5lpcq3usj9xt", description: "RingCX Live Monitoring using Real-Time dashboard", tags:["Live","Monitoring","dashboard","real-Time","RingCX"] },
+  { title: "RingCX Create and manage Inboxes in “All messages” Menu", url: "https://docs.google.com/document/d/1TBTWlPSQ8uOy7fwIeDV-vFEai_b1RGoPhbtoBqdYKKI/edit?tab=t.19nsrkw1vbue#heading=h.b7mm43kf26q7", description: "RingCX Create and manage Inboxes in “All messages” Menu", tags:["Inbox","messages","Create","Menu","RingCX"] },
+  { title: "RingCX Create Pre-chat form for Digital: Chat Channels", url: "https://docs.google.com/document/d/1TBTWlPSQ8uOy7fwIeDV-vFEai_b1RGoPhbtoBqdYKKI/edit?tab=t.77acch0wdec#heading=h.8dvgkge7pue7", description: "RingCX Create Pre-chat form for Digital: Chat Channels", tags:["Create","Pre-chat","form","Digital","Chat Channels","RingCX"] },
+  { title: "RingCX How to prevent users from being kicked out when going into lunch or breaks", url: "https://docs.google.com/document/d/1TBTWlPSQ8uOy7fwIeDV-vFEai_b1RGoPhbtoBqdYKKI/edit?tab=t.d8rjk7vliwg4#heading=h.7z87d6bvki9s", description: "RingCX How to prevent users from being kicked out when going into lunch or breaks", tags:["How to","kicked out","lunch","breaks","prevent","RingCX"] },
+  { title: "RingCX SMS for Canada", url: "https://docs.google.com/document/d/1TBTWlPSQ8uOy7fwIeDV-vFEai_b1RGoPhbtoBqdYKKI/edit?tab=t.50446arwkg2y", description: "RingCX SMS for Canada", tags:["SMS","Canada","RingCX"] },
+  { title: "RingCX WIP Custom Reports", url: "https://docs.google.com/document/d/1TBTWlPSQ8uOy7fwIeDV-vFEai_b1RGoPhbtoBqdYKKI/edit?tab=t.wekidum9fs3v", description: "RingCX WIP Custom Reports", tags:["WIP","Custom","Reports","RingCX"] },
+  { title: "RingCX WIP Outbound Dialer", url: "https://docs.google.com/document/d/1TBTWlPSQ8uOy7fwIeDV-vFEai_b1RGoPhbtoBqdYKKI/edit?tab=t.h88eydu26u1s#heading=h.lio7wkfa4eeu", description: "RingCX WIP Outbound Dialer", tags:["WIP","Outbound","Dialer","RingCX"] },
+  { title: "RingCX WIP Embedded Agent in SF", url: "https://docs.google.com/document/d/1TBTWlPSQ8uOy7fwIeDV-vFEai_b1RGoPhbtoBqdYKKI/edit?tab=t.28sxwkpno1jn", description: "RingCX WIP Embedded Agent in SF", tags:["WIP","Embedded","Agent","SF","Salesforce","RingCX"] },
+  { title: "RingCX Test Email", url: "https://docs.google.com/document/d/1TBTWlPSQ8uOy7fwIeDV-vFEai_b1RGoPhbtoBqdYKKI/edit?tab=t.qd9mpa2whoa5", description: "RingCX Test Email", tags:["Test","Email","RingCX"] },
+  { title: "RingCX How to Capture Console and Network logs on RC App", url: "https://docs.google.com/document/d/1TBTWlPSQ8uOy7fwIeDV-vFEai_b1RGoPhbtoBqdYKKI/edit?tab=t.q7i693mz2ifk#heading=h.1rjl4amjk90j", description: "RingCX How to Capture Console and Network logs on RC App", tags:["How to","Capture","Console","Network","logs", "RC app","RingCX"] },
+  { title: "RingCX Knowledge Sharing Sessions Salesforce", url: "https://drive.google.com/file/d/1tdKJrgqiWSUyqo5vyMBNqRettJVVRhy-/view?usp=sharing", description: "RingCX Knowledge Sharing Sessions Salesforce", tags:["Knowledge","Salesforce","Meeting"] },
+  { title: "RingCX Knowledge Sharing Sessions Post Call Survey, Agent Availabiity", url: "https://drive.google.com/file/d/17uP61zYSh_hBHVpPSFi8BFFFdCui7OmU/view?usp=sharing", description: "RingCX Knowledge Sharing Sessions Post Call Survey, Agent Availabiity", tags:["Test","Email","RingCX"] },
+  { title: "RingCX Knowledge Sharing Sessions Digital Chat", url: "https://drive.google.com/file/d/1oV-8w3Aqu4ozvMSIRsgZlpYoMSTyinqZ/view?usp=sharing", description: "RingCX Knowledge Sharing Sessions Digital Chat", tags:["Knowledge","Digital","Chat","Meeting","Sessions"] },
+  { title: "RingCX Knowledge Sharing Sessions Analytics, P&D Best Practice", url: "https://drive.google.com/file/d/1bwXJddylEiwcNPoqptsshbDb8hspxe4t/view?usp=sharing", description: "RingCX Knowledge Sharing Sessions Analytics, P&D Best Practice", tags:["Knowledge","Analytics","Meeting","P&D","Best Practice"] },
+  { title: "RingCX Knowledge Sharing Sessions Agentless Dialer", url: "https://drive.google.com/file/d/1ANksn7D7Hm7wz_BFJUlbn8ZAwGD0WPt0/view?usp=sharing", description: "RingCX Knowledge Sharing Sessions Agentless Dialer", tags:["Knowledge","Dialer","Meeting","Agentless"] },
+  { title: "RCX Speed to Lead", url: "https://drive.google.com/file/d/1pwPCbZmm_24gyLPwmgEHHoy-92r3LxkO/view?usp=sharing", description: "RCX Speed to Lead", tags:["Speed","Lead","Solution","Notes","RingCX"	] },
+  { title: "REX Bulk User Upload, CCRN", url: "https://docs.google.com/presentation/d/1mVMda_LfMJApBTXgtpnG0uwfnhyzZ4GS/edit?usp=sharing&ouid=109407384816757338920&rtpof=true&sd=true", description: "REX Bulk User Upload, CCRN", tags:["Bulk","User","Upload","CCRN","RingEX"	] },
+ 
+
+];
+
+// =====================================
+// 2) SEARCH ENGINE — simple and fast
+// =====================================
+const $ = (sel, el=document) => el.querySelector(sel);
+const $$ = (sel, el=document) => Array.from(el.querySelectorAll(sel));
+
+const input = $('#q');
+const resultsEl = $('#results');
+const countEl = $('#count');
+const form = $('#searchForm');
+const luckyBtn = $('#luckyBtn');
+
+function escapeHTML(str){ return str.replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#39;'}[m])); }
+function tokenize(q){ return q.toLowerCase().trim().split(/\s+/).filter(Boolean); }
+function scoreLink(link, tokens){
+  if(tokens.length===0) return 1;
+  const hayTitle = link.title.toLowerCase();
+  const hayDesc = (link.description||'').toLowerCase();
+  const hayUrl  = (link.url||'').toLowerCase();
+  const hayTags = (link.tags||[]).join(' ').toLowerCase();
+  let score = 0;
+  for(const t of tokens){
+    if(hayTitle.includes(t)) score += 6;
+    if(hayDesc.includes(t)) score += 3;
+    if(hayTags.includes(t)) score += 2.5;
+    if(hayUrl.includes(t))  score += 1.5;
+    if(hayTitle.startsWith(t)) score += 4;
+  }
+  return score;
+}
+
+function renderResults(query){
+  const tokens = tokenize(query);
+  const ranked = LINKS.map(l => ({...l, _score: scoreLink(l, tokens)}))
+    .filter(x => x._score > 0 || tokens.length===0)
+    .sort((a,b)=> b._score - a._score || a.title.localeCompare(b.title));
+
+  resultsEl.innerHTML = ranked.map(link => `
+    <div class="card">
+      <a href="${escapeHTML(link.url)}" target="_blank">
+        <div class="title">${escapeHTML(link.title)}</div>
+        ${link.description?`<div class="desc">${escapeHTML(link.description)}</div>`:''}
+        <div class="url">${escapeHTML(link.url)}</div>
+        <div class="tags">${(link.tags||[]).map(tag => `<span class="tag">${escapeHTML(tag)}</span>`).join('')}</div>
+      </a>
+    </div>`).join('');
+
+  countEl.textContent = ranked.length;
+}
+
+form.addEventListener('submit', e => { e.preventDefault(); renderResults(input.value); });
+input.addEventListener('input', ()=> renderResults(input.value));
+luckyBtn.addEventListener('click', ()=>{
+  const tokens = tokenize(input.value);
+  const ranked = LINKS.map(l=>({...l, _score:scoreLink(l, tokens)}))
+    .filter(x=> tokens.length? x._score>0 : true)
+    .sort((a,b)=> b._score - a._score || a.title.localeCompare(b.title));
+  if(ranked[0]) window.open(ranked[0].url, '_blank');
+});
+
+// Load initial results
+renderResults('');
+</script>
+    <!-- RIGHT: What's New? -->
+    <aside class="links-box">
+      <h2>What's New?</h2>
+      <ul>
+        <li><a href="https://docs.google.com/presentation/d/1Sp9xyzk1Pzy0gufncgPabP5rn_05Ecub/edit?usp=sharing&ouid=109407384816757338920&rtpof=true&sd=true" target="_blank" rel="noopener">24.2.2 What’s In RingCX - May</a></li>
+		<li><a href="https://docs.google.com/presentation/d/1LQ7I7QiNllgQg1L2zp7wmeHqZNdKbEgb/edit?usp=sharing&ouid=109407384816757338920&rtpof=true&sd=true" target="_blank" rel="noopener">24.2.3 What’s In RingCX - June</a></li>
+		<li><a href="https://drive.google.com/file/d/1lQimMr1OdVzZMmGViQ2U__NLD1NZdS1i/view?usp=sharing" target="_blank" rel="noopener">24.2.3 What’s In RingCX - June (Recording)</a></li>
+		<li><a href="https://docs.google.com/presentation/d/1Kj1a51vF3QMuhUMQJc9yR1uwkByd33YM/edit?usp=sharing&ouid=109407384816757338920&rtpof=true&sd=true" target="_blank" rel="noopener">24.3.1 What’s In RingCX - July</a></li>
+		<li><a href="https://drive.google.com/file/d/1XZyWnlqq_k8dPrqJvnyEOV03hpuDoh6G/view?usp=sharing" target="_blank" rel="noopener">24.3.1 What’s In RingCX - July (Recording)</a></li>
+		<li><a href="https://docs.google.com/presentation/d/1cjdNvez-VDjMcJQWYjrOoh0Cpy-lUHzJ/edit?usp=sharing&ouid=109407384816757338920&rtpof=true&sd=true" target="_blank" rel="noopener">24.3.2 What’s In RingCX - Aug</a></li>
+		<li><a href="https://drive.google.com/file/d/1qILhgdsqKq7GNjpde_1Vr5acpsS5P5dX/view?usp=sharing" target="_blank" rel="noopener">24.3.2 What’s In RingCX - Aug (Recording)</a></li>
+		
+      </ul>
+    </aside>
+  </div>
+</div>
+</body>
+</html>
