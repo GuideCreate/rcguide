@@ -101,6 +101,68 @@
   .video-box a:hover, .links-box a:hover {
     text-decoration: underline;
   }
+  
+  /* Floating Feedback Button */
+#feedbackBtn {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: var(--accent);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  font-size: 24px;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+  z-index: 999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Feedback Form Modal */
+#feedbackFormContainer {
+  display: none;
+  position: fixed;
+  bottom: 90px;
+  right: 20px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px;
+  width: 300px;
+  z-index: 1000;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+}
+
+#feedbackFormContainer h3 {
+  margin-top: 0;
+  color: var(--text);
+}
+
+#feedbackForm input,
+#feedbackForm textarea,
+#feedbackForm button {
+  width: 100%;
+  margin-top: 8px;
+  padding: 8px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  font-size: 14px;
+}
+
+#feedbackForm button {
+  background: var(--accent);
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+#feedbackForm button:hover {
+  background: var(--accent-2);
+}
+
 </style>
 </head>
 <body>
@@ -302,21 +364,70 @@ renderResults('');
     <aside class="links-box">
       <h2>What's New?</h2>
       <ul>
-        
-		
-		
-		<li><a href="https://docs.google.com/presentation/d/1cjdNvez-VDjMcJQWYjrOoh0Cpy-lUHzJ/edit?usp=sharing&ouid=109407384816757338920&rtpof=true&sd=true" target="_blank" rel="noopener">24.3.2 What’s In RingCX - Aug</a></li>
-		<li><a href="https://drive.google.com/file/d/1qILhgdsqKq7GNjpde_1Vr5acpsS5P5dX/view?usp=sharing" target="_blank" rel="noopener">24.3.2 What’s In RingCX - Aug (Recording)</a></li>
-		<li><a href="https://docs.google.com/presentation/d/1Kj1a51vF3QMuhUMQJc9yR1uwkByd33YM/edit?usp=sharing&ouid=109407384816757338920&rtpof=true&sd=true" target="_blank" rel="noopener">24.3.1 What’s In RingCX - July</a></li>
-		<li><a href="https://drive.google.com/file/d/1XZyWnlqq_k8dPrqJvnyEOV03hpuDoh6G/view?usp=sharing" target="_blank" rel="noopener">24.3.1 What’s In RingCX - July (Recording)</a></li>
+        <li><a href="https://docs.google.com/presentation/d/1Sp9xyzk1Pzy0gufncgPabP5rn_05Ecub/edit?usp=sharing&ouid=109407384816757338920&rtpof=true&sd=true" target="_blank" rel="noopener">24.2.2 What’s In RingCX - May</a></li>
 		<li><a href="https://docs.google.com/presentation/d/1LQ7I7QiNllgQg1L2zp7wmeHqZNdKbEgb/edit?usp=sharing&ouid=109407384816757338920&rtpof=true&sd=true" target="_blank" rel="noopener">24.2.3 What’s In RingCX - June</a></li>
 		<li><a href="https://drive.google.com/file/d/1lQimMr1OdVzZMmGViQ2U__NLD1NZdS1i/view?usp=sharing" target="_blank" rel="noopener">24.2.3 What’s In RingCX - June (Recording)</a></li>
-		<li><a href="https://docs.google.com/presentation/d/1Sp9xyzk1Pzy0gufncgPabP5rn_05Ecub/edit?usp=sharing&ouid=109407384816757338920&rtpof=true&sd=true" target="_blank" rel="noopener">24.2.2 What’s In RingCX - May</a></li>
+		<li><a href="https://docs.google.com/presentation/d/1Kj1a51vF3QMuhUMQJc9yR1uwkByd33YM/edit?usp=sharing&ouid=109407384816757338920&rtpof=true&sd=true" target="_blank" rel="noopener">24.3.1 What’s In RingCX - July</a></li>
+		<li><a href="https://drive.google.com/file/d/1XZyWnlqq_k8dPrqJvnyEOV03hpuDoh6G/view?usp=sharing" target="_blank" rel="noopener">24.3.1 What’s In RingCX - July (Recording)</a></li>
+		<li><a href="https://docs.google.com/presentation/d/1cjdNvez-VDjMcJQWYjrOoh0Cpy-lUHzJ/edit?usp=sharing&ouid=109407384816757338920&rtpof=true&sd=true" target="_blank" rel="noopener">24.3.2 What’s In RingCX - Aug</a></li>
+		<li><a href="https://drive.google.com/file/d/1qILhgdsqKq7GNjpde_1Vr5acpsS5P5dX/view?usp=sharing" target="_blank" rel="noopener">24.3.2 What’s In RingCX - Aug (Recording)</a></li>
 		
       </ul>
     </aside>
+	
+	
   </div>
 </div>
+<!-- Floating Feedback Button -->
+<button id="feedbackBtn">💬</button>
+
+<!-- Feedback Form Modal -->
+<div id="feedbackFormContainer">
+  <h3>Send Feedback</h3>
+  <form id="feedbackForm">
+    <input type="text" id="topic" placeholder="Topic" required />
+    <textarea id="feedbackMessage" placeholder="Enter Link..." rows="4" required></textarea>
+    <button type="submit">Send</button>
+  </form>
+</div>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script>
+  (function() {
+    emailjs.init("0C7xzX5R7NQeW0-F0"); // your public key
+  })();
+
+  const feedbackBtn = document.getElementById("feedbackBtn");
+  const feedbackFormContainer = document.getElementById("feedbackFormContainer");
+
+  // Toggle form visibility
+  feedbackBtn.addEventListener("click", () => {
+    feedbackFormContainer.style.display =
+      feedbackFormContainer.style.display === "block" ? "none" : "block";
+  });
+
+  // Handle form submission
+  document.getElementById("feedbackForm").addEventListener("submit", function(e) {
+    e.preventDefault();
+
+    const topic = document.getElementById("topic").value;
+    const feedback = document.getElementById("feedbackMessage").value;
+
+    emailjs.send("service_n9rfveo", "template_ecz47wq", {
+      topic: topic,
+      feedback: feedback
+    })
+    .then(() => {
+      alert("✅ Feedback sent successfully!");
+      this.reset();
+      feedbackFormContainer.style.display = "none";
+    })
+    .catch((err) => {
+      console.error("❌ FAILED:", err);
+      alert("❌ Error sending feedback: " + (err.text || err));
+    });
+  });
+</script>
+
+
 </body>
 </html>
-
